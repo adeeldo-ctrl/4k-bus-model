@@ -112,6 +112,45 @@ public class Karachi4KBusBootstrap : MonoBehaviour
             wheel.GetComponent<Renderer>().material = rubber;
         }
 
+        // Traditional colourful Bedford-style side ornament panels.
+        for (int side = -1; side <= 1; side += 2)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                float z = 1.25f - i * 1.12f;
+                var outer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                outer.name = "Truck art floral medallion";
+                outer.transform.SetParent(root.transform, false);
+                outer.transform.localPosition = new Vector3(side * 1.225f, 2.12f, z);
+                outer.transform.localScale = new Vector3(0.075f, 0.42f, 0.42f);
+                outer.GetComponent<Renderer>().sharedMaterial = gold;
+                Destroy(outer.GetComponent<Collider>());
+
+                var centre = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                centre.name = "Floral medallion centre";
+                centre.transform.SetParent(root.transform, false);
+                centre.transform.localPosition = new Vector3(side * 1.27f, 2.12f, z);
+                centre.transform.localScale = new Vector3(0.045f, 0.19f, 0.19f);
+                centre.GetComponent<Renderer>().sharedMaterial = red;
+                Destroy(centre.GetComponent<Collider>());
+            }
+            Part(root.transform, "Upper decorative pinstripe", new Vector3(side * 1.205f, 3.34f, -0.45f),
+                new Vector3(0.045f, 0.055f, 5.0f), gold);
+            Part(root.transform, "Lower cream body moulding", new Vector3(side * 1.205f, 1.28f, -0.45f),
+                new Vector3(0.06f, 0.09f, 5.0f), cream);
+        }
+
+        // Bedford-style front face details and route board.
+        Part(root.transform, "Front destination board", new Vector3(0, 3.28f, 3.12f),
+            new Vector3(1.28f, 0.28f, 0.12f), red);
+        Part(root.transform, "Front destination board inset", new Vector3(0, 3.29f, 3.19f),
+            new Vector3(1.08f, 0.12f, 0.035f), gold);
+        for (int i = 0; i < 7; i++)
+        {
+            Part(root.transform, "Front grille vertical slat", new Vector3(-0.34f + i * 0.113f, 1.32f, 3.515f),
+                new Vector3(0.035f, 0.25f, 0.035f), body);
+        }
+
         // Cabin floor and passenger seats
         Part(root.transform, "Interior floor", new Vector3(0, 1.55f, -0.45f), new Vector3(1.95f, 0.12f, 4.95f), cream);
         for (int row = 0; row < 5; row++)
