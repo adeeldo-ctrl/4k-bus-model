@@ -17,6 +17,8 @@ public class Karachi4KBusBootstrap : MonoBehaviour
         GameObject bus = BuildBus();
         var driver = bus.AddComponent<BusDrivingController>();
         driver.Configure();
+        var lighting = bus.AddComponent<BusLightingController>();
+        lighting.driving = driver;
         BuildCamera(bus.transform);
         if (createTouchHud) BuildTouchHud(driver);
     }
