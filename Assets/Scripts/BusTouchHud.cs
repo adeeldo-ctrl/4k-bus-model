@@ -17,6 +17,9 @@ public class BusTouchHud : MonoBehaviour
         ButtonTap("REVERSE", new Vector2(0.78f, 0.34f), new Vector2(150, 70), () => controller.SetReverse(!controller.reverseSelected));
         ButtonTap("DOOR", new Vector2(0.91f, 0.34f), new Vector2(130, 70), controller.ToggleDoor);
         ButtonTap("LIGHTS", new Vector2(0.09f, 0.34f), new Vector2(130, 70), controller.ToggleLights);
+        ButtonTap("LEFT SIGNAL", new Vector2(0.39f, 0.34f), new Vector2(150, 70), () => controller.SetIndicator(1));
+        ButtonTap("RIGHT SIGNAL", new Vector2(0.51f, 0.34f), new Vector2(150, 70), () => controller.SetIndicator(2));
+        ButtonTap("HAZARD", new Vector2(0.63f, 0.34f), new Vector2(130, 70), () => controller.SetIndicator(3));
         ButtonTap("CAMERA", new Vector2(0.22f, 0.34f), new Vector2(150, 70), () => FindObjectOfType<BusCameraRig>()?.SwitchCamera());
     }
 
