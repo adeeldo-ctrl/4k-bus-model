@@ -10,7 +10,7 @@ public class BusCameraRig : MonoBehaviour
     public float height = 3.2f;
 
     int mode;
-    float yaw = 180f;
+    float yaw = 0f;
     float pitch = 12f;
     Vector2 previousTouch;
     bool dragging;
@@ -99,8 +99,8 @@ public class BusCameraRig : MonoBehaviour
     public void SwitchCamera()
     {
         mode = (mode + 1) % 3;
-        if (mode == 0) { yaw = 180f; pitch = 12f; }
-        else if (mode == 1) { yaw = 180f; pitch = 8f; }
+        if (mode == 0) { yaw = 0f; pitch = 12f; }
+        else if (mode == 1) { yaw = 0f; pitch = 8f; }
         else { yaw = 180f; pitch = 0f; }
         dragging = false;
     }
