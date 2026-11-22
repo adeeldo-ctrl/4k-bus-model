@@ -17,7 +17,7 @@ public class BusDrivingController : MonoBehaviour
     [HideInInspector] public bool handbrake;
 
     float speed;
-    bool lightsOn;
+    BusLightingController lighting;
     Transform steeringWheel;
     Transform[] wheels;
     Light[] headlights;
@@ -31,6 +31,7 @@ public class BusDrivingController : MonoBehaviour
         wheels = GetComponentsInChildren<Transform>();
         headlights = GetComponentsInChildren<Light>();
         door = GetComponentInChildren<BusDoor>();
+        lighting = GetComponent<BusLightingController>();
     }
 
     void Update()
@@ -55,7 +56,7 @@ public class BusDrivingController : MonoBehaviour
         foreach (var t in wheels)
         {
             if (t.name == "Road wheel")
-                t.Rotate(Vector3.right, speed / Mathf.Max(0.1f, wheelRadius) * Mathf.Rad2Deg * Time.deltaTime, Space.Self);
+                t.Rotate(Vector3.up, speed / Mathf.Max(0.1f, wheelRadius) * Mathf.Rad2Deg * Time.deltaTime, Space.Self);
         }
     }
 
@@ -85,7 +86,15 @@ public class BusDrivingController : MonoBehaviour
 
     public void ToggleLights()
     {
-        lightsOn = !lightsOn;
-        foreach (var light in headlights) light.enabled = lightsOn;
+        if (lighting != null) lighting.ToggleHeadlights();
+        else
+        {
+            foreach (var light in headlights) light.enabled = !light.enabled;
+        }
+    }
+
+    public void SetIndicator(int mode)
+    {
+        if (lighting != null) lighting.SetIndicator(mode);
     }
 }
