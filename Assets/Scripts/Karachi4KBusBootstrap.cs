@@ -27,9 +27,10 @@ public class Karachi4KBusBootstrap : MonoBehaviour
         {
             var ground = GameObject.CreatePrimitive(PrimitiveType.Plane);
             ground.name = "Karachi Test Ground";
-            ground.transform.localScale = new Vector3(12, 1, 12);
+            ground.transform.localScale = new Vector3(25, 1, 25);
             ground.GetComponent<Renderer>().material = Mat("Asphalt", groundColor, 0.9f);
         }
+        new GameObject("Karachi Street Environment").AddComponent<KarachiStreetGenerator>();
         RenderSettings.ambientLight = new Color(0.65f, 0.66f, 0.68f);
         var sun = new GameObject("Sun").AddComponent<Light>();
         sun.type = LightType.Directional;
