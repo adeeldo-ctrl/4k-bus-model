@@ -6,6 +6,8 @@ public class BusTouchHud : MonoBehaviour
 {
     public BusDrivingController controller;
     Font font;
+    Text speedReadout;
+    Text gearReadout;
 
     void Start()
     {
@@ -21,6 +23,34 @@ public class BusTouchHud : MonoBehaviour
         ButtonTap("RIGHT SIGNAL", new Vector2(0.51f, 0.34f), new Vector2(150, 70), () => controller.SetIndicator(2));
         ButtonTap("HAZARD", new Vector2(0.63f, 0.34f), new Vector2(130, 70), () => controller.SetIndicator(3));
         ButtonTap("CAMERA", new Vector2(0.22f, 0.34f), new Vector2(150, 70), () => FindObjectOfType<BusCameraRig>()?.SwitchCamera());
+        speedReadout = MakeReadout("SPEED", new Vector2(0.5f, 0.91f), new Vector2(300, 74), 34);
+        gearReadout = MakeReadout("GEAR", new Vector2(0.5f, 0.84f), new Vector2(220, 48), 22);
+    }
+
+    void Update()
+    {
+        if (controller == null) return;
+        if (speedReadout != null) speedReadout.text = Mathf.Abs(controller.SpeedKph).ToString("0") + " km/h";
+        if (gearReadout != null) gearReadout.text = controller.reverseSelected ? "REVERSE" : (controller.handbrake ? "PARK" : "DRIVE");
+    }
+
+    Text MakeReadout(string label, Vector2 anchor, Vector2 size, int fontSize)
+    {
+        var go = new GameObject(label + " Readout");
+        go.transform.SetParent(transform, false);
+        var rt = go.AddComponent<RectTransform>();
+        rt.anchorMin = rt.anchorMax = anchor;
+        rt.anchoredPosition = Vector2.zero;
+        rt.sizeDelta = size;
+        var txt = go.AddComponent<Text>();
+        txt.font = font;
+        txt.text = label;
+        txt.alignment = TextAnchor.MiddleCenter;
+        txt.color = Color.white;
+        txt.fontSize = fontSize;
+        txt.fontStyle = FontStyle.Bold;
+        txt.raycastTarget = false;
+        return txt;
     }
 
     void ButtonHold(string label, Vector2 anchor, Vector2 size, System.Action<bool> callback)
