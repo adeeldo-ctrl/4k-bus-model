@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class BusCameraRig : MonoBehaviour
 {
@@ -18,35 +19,89 @@ public class BusCameraRig : MonoBehaviour
     {
         if (target == null) return;
         if (Input.GetKeyDown(KeyCode.C)) SwitchCamera();
-        if (Input.GetMouseButtonDown(0)) { previousTouch = Input.mousePosition; dragging = true; }
+        ReadLookInput();
+        UpdateCameraPose();
+    }
+
+    void ReadLookInput()
+    {
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began)
+            {
+                if (EventSystem.current == null || !EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+                {
+                    previousTouch = touch.position;
+                    dragging = true;
+                }
+            }
+            else if (touch.phase == TouchPhase.Moved && dragging)
+            {
+                ApplyLookDelta(touch.position - previousTouch);
+                previousTouch = touch.position;
+            }
+            else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+            {
+                dragging = false;
+            }
+            return;
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            bool overUi = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+            if (!overUi)
+            {
+                previousTouch = Input.mousePosition;
+                dragging = true;
+            }
+        }
         if (Input.GetMouseButtonUp(0)) dragging = false;
         if (dragging && Input.GetMouseButton(0))
         {
             Vector2 now = Input.mousePosition;
-            Vector2 delta = now - previousTouch;
-            yaw += delta.x * sensitivity;
-            pitch = Mathf.Clamp(pitch - delta.y * sensitivity, -5, 55);
+            ApplyLookDelta(now - previousTouch);
             previousTouch = now;
         }
+    }
 
-        Vector3 focus = target.position + Vector3.up * 2f;
+    void ApplyLookDelta(Vector2 delta)
+    {
+        yaw += delta.x * sensitivity;
+        pitch = Mathf.Clamp(pitch - delta.y * sensitivity, -12f, 58f);
+    }
+
+    void UpdateCameraPose()
+    {
         if (mode == 0)
         {
+            Vector3 focus = target.position + Vector3.up * 2f;
             Quaternion orbit = Quaternion.Euler(pitch, yaw, 0);
             transform.position = focus + orbit * new Vector3(0, 0, -distance);
             transform.LookAt(focus);
         }
         else if (mode == 1)
         {
-            transform.position = target.TransformPoint(new Vector3(0, 2.65f, 1.55f));
-            transform.rotation = target.rotation * Quaternion.Euler(4, 180, 0);
+            Vector3 localFocus = new Vector3(0f, 2.25f, -0.25f);
+            Vector3 focus = target.TransformPoint(localFocus);
+            Quaternion orbit = target.rotation * Quaternion.Euler(pitch, yaw, 0);
+            transform.position = focus + orbit * new Vector3(0, 0, -2.6f);
+            transform.LookAt(focus);
         }
         else
         {
             transform.position = target.TransformPoint(new Vector3(-0.55f, 2.55f, 2.2f));
-            transform.rotation = target.rotation * Quaternion.Euler(0, 180, 0);
+            transform.rotation = target.rotation * Quaternion.Euler(pitch * 0.45f, yaw - 180f, 0);
         }
     }
 
-    public void SwitchCamera() { mode = (mode + 1) % 3; }
+    public void SwitchCamera()
+    {
+        mode = (mode + 1) % 3;
+        if (mode == 0) { yaw = 180f; pitch = 12f; }
+        else if (mode == 1) { yaw = 180f; pitch = 8f; }
+        else { yaw = 180f; pitch = 0f; }
+        dragging = false;
+    }
 }
